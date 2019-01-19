@@ -1,12 +1,12 @@
 import { Navigation } from 'react-native-navigation';
 import { Platform } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const startTabs = () => {
     Promise.all([
-        Icon.getImageSource(Platform.OS === 'android' ? "map" : "map", 30),
-        Icon.getImageSource(Platform.OS === 'android' ? "place" : "place", 30),
-        Icon.getImageSource(Platform.OS === 'android' ? "menu" : "menu", 30)
+        Icon.getImageSource(Platform.OS === 'android' ? "md-map" : "ios-map", 30),
+        Icon.getImageSource(Platform.OS === 'android' ? "md-share-alt" : "ios-share", 30),
+        Icon.getImageSource(Platform.OS === 'android' ? "md-menu" : "ios-menu", 30)
     ]).then(sources => {
         Navigation.startTabBasedApp({
             tabs: [
@@ -41,21 +41,19 @@ const startTabs = () => {
                     }
                 }
             ],
-            tabsStyle: { 
-                tabBarButtonColor: "orange"
-              },
+            tabsStyle: {
+                tabBarSelectedButtonColor: "orange"
+            },
             drawer: {
                 left: {
                     screen: "awesome-places.SideDrawer"
                 }
             },
             appStyle: {
-                tabBarButtonColor: "white",
-                tabBarSelectedButtonColor: "orange",
-                tabBarBackgroundColor: 'black'
-            }
+                tabBarSelectedButtonColor: "orange"
+            },
         });
-    })
+    });
 };
 
 export default startTabs;

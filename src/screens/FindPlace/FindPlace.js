@@ -9,6 +9,7 @@ import {
 import { connect } from "react-redux";
 
 import PlaceList from "../../components/PlaceList/PlaceList";
+import { getPlaces } from "../../store/actions/index";
 
 class FindPlaceScreen extends Component {
   static navigatorStyle = {
@@ -26,6 +27,10 @@ class FindPlaceScreen extends Component {
     this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent);
   }
 
+  componentDidMount() {
+    this.props.onLoadPlaces();
+  }
+
   onNavigatorEvent = event => {
     if (event.type === "NavBarButtonPress") {
       if (event.id === "sideDrawerToggle") {
@@ -36,17 +41,12 @@ class FindPlaceScreen extends Component {
     }
   };
 
-  itemSelectedHandler = key => {
-    const selPlace = this.props.places.find(place => {
-      return place.key === key;
-    });
-    this.props.navigator.push({
-      screen: "awesome-places.PlaceDetailScreen",
-      title: selPlace.name,
-      passProps: {
-        selectedPlace: selPlace
-      }
-    });
+  placesLoadedHandler = () => {
+    Animated.timing(this.state.placesAnim, {
+      toValue: 1,
+      duration: 500,
+      useNativeDriver: true
+    }).start();
   };
 
   placesSearchHandler = () => {
@@ -62,12 +62,17 @@ class FindPlaceScreen extends Component {
     });
   };
 
-  placesLoadedHandler = () => {
-    Animated.timing(this.state.placesAnim, {
-      toValue: 1,
-      duration: 500,
-      useNativeDriver: true
-    }).start();
+  itemSelectedHandler = key => {
+    const selPlace = this.props.places.find(place => {
+      return place.key === key;
+    });
+    this.props.navigator.push({
+      screen: "awesome-places.PlaceDetailScreen",
+      title: selPlace.name,
+      passProps: {
+        selectedPlace: selPlace
+      }
+    });
   };
 
   render() {
@@ -95,14 +100,9 @@ class FindPlaceScreen extends Component {
     if (this.state.placesLoaded) {
       content = (
         <Animated.View
-        style={{
-          opacity: this.state.placesAnim,
-          transform: [
-            {
-              scale: this.state.placesAnim
-            }
-          ]
-        }}
+          style={{
+            opacity: this.state.placesAnim
+          }}
         >
           <PlaceList
             places={this.props.places}
@@ -112,9 +112,7 @@ class FindPlaceScreen extends Component {
       );
     }
     return (
-      <View
-        style={this.state.placesLoaded === true ? null : styles.buttonContainer}
-      >
+      <View style={this.state.placesLoaded ? null : styles.buttonContainer}>
         {content}
       </View>
     );
@@ -130,7 +128,7 @@ const styles = StyleSheet.create({
   searchButton: {
     borderColor: "orange",
     borderWidth: 3,
-    borderRadius: 15,
+    borderRadius: 50,
     padding: 20
   },
   searchButtonText: {
@@ -146,4 +144,10 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps)(FindPlaceScreen);
+const mapDispatchToProps = dispatch => {
+  return {
+    onLoadPlaces: () => dispatch(getPlaces())
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(FindPlaceScreen);

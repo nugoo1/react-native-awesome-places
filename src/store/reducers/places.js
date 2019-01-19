@@ -1,32 +1,26 @@
-import { ADD_PLACE, DELETE_PLACE } from '../actions/actionTypes';
+import { SET_PLACES, REMOVE_PLACE } from "../actions/actionTypes";
 
 const initialState = {
-    places: []
-}
+  places: []
+};
 
 const reducer = (state = initialState, action) => {
-    switch (action.type) {
-        case ADD_PLACE:
-            return {
-                ...state,
-                places: state.places.concat({
-                    key: Math.random() + 'a',
-                    name: action.placeName,
-                    image: {
-                      uri: "http://pluspng.com/img-png/bird-hd-png-humming-bird-transparent-png-clipart-picture-1442.png"
-                    }
-                  })
-            };
-        case DELETE_PLACE:
-            return {
-                ...state,
-                places: state.places.filter(place => {
-                    return place.key !== action.placeKey;
-                  })
-            };
-        default:
-            return state;
-    }
+  switch (action.type) {
+    case SET_PLACES:
+      return {
+        ...state,
+        places: action.places
+      };
+    case REMOVE_PLACE:
+      return {
+        ...state,
+        places: state.places.filter(place => {
+          return place.key !== action.key;
+        })
+      };
+    default:
+      return state;
+  }
 };
 
 export default reducer;
