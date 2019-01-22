@@ -57,7 +57,7 @@ export const tryAuth = (authData, authMode) => {
 export const authStoreToken = (token, expiresIn, refreshToken) => {
   return dispatch => {
     const now = new Date();
-    const expiryDate = now.getTime() + 5000;
+    const expiryDate = now.getTime() + expiresIn * 1000;
     dispatch(authSetToken(token, expiryDate));
     AsyncStorage.setItem("ap:auth:token", token);
     AsyncStorage.setItem("ap:auth:expiryDate", expiryDate.toString());
@@ -122,8 +122,8 @@ export const authGetToken = () => {
           })
           .then(res => res.json())
           .then(parsedRes => {
+            console.log(parsedRes)
             if (parsedRes.id_token) {
-              console.log("Refresh token worked!");
               dispatch(
                 authStoreToken(
                   parsedRes.id_token,
@@ -135,7 +135,7 @@ export const authGetToken = () => {
             } else {
               dispatch(authClearStorage());
             }
-          });
+          })
       })
       .then(token => {
         if (!token) {
